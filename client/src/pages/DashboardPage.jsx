@@ -1072,31 +1072,52 @@ export default function DashboardPage({ user, onLogout }) {
                     <h3 className="text-[14px] uppercase font-bold tracking-[0.2em] text-slate-400 mb-6">Latest News & Sentiment Feeds</h3>
                     
                     <div className="space-y-5">
-                      {(report.latest_news || []).map((item) => (
-                        <div key={item.title} className="rounded-[20px] border border-slate-150 bg-slate-50/20 p-6 hover:bg-slate-50/40 transition-all shadow-sm">
-                          <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                            <div>
-                              <h4 className="text-[18px] font-bold text-slate-900 leading-snug hover:text-[#5B5BF7] transition-all cursor-pointer">
-                                <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a>
-                              </h4>
-                              <p className="mt-2 text-slate-600 text-[15px] leading-[1.7] max-w-[70ch]">{item.snippet}</p>
-                            </div>
-                            
-                            <div className="flex gap-3 shrink-0 mt-2 md:mt-0">
-                              <span className={`px-3 py-1 rounded font-extrabold text-[14px] uppercase ${
-                                item.sentiment === 'positive' || item.sentiment === 'bullish' ? 'bg-[#00C896]/10 text-[#00C896]' :
-                                item.sentiment === 'neutral' ? 'bg-slate-150 text-slate-600' :
-                                'bg-[#FF5A5A]/10 text-[#FF5A5A]'
-                              }`}>
-                                {item.sentiment}
-                              </span>
-                              <span className="px-3 py-1 rounded font-extrabold text-[14px] bg-slate-150 text-slate-600 uppercase">
-                                {item.source || 'News'}
-                              </span>
+                      {(report.latest_news || []).map((item) => {
+                        const rawSnippet = (item.snippet || '')
+                          .replace(/\r?\n|\r/g, ' ')
+                          .replace(/[#*`~_]/g, '')
+                          .replace(/\|/g, ' ')
+                          .replace(/-{3,}/g, ' ')
+                          .replace(/\s+/g, ' ')
+                          .trim();
+
+                        const maxChars = 280;
+                        const isLong = rawSnippet.length > maxChars;
+                        const cleanSnippet = isLong
+                          ? rawSnippet.substring(0, maxChars).substring(0, rawSnippet.substring(0, maxChars).lastIndexOf(' ')) + '...'
+                          : rawSnippet;
+                        const cleanSource = (item.source || 'News')
+                          .replace('https://', '')
+                          .replace('http://', '')
+                          .split('/')[0]
+                          .toUpperCase();
+                        
+                        return (
+                          <div key={item.title} className="rounded-[20px] border border-slate-150 bg-slate-50/20 p-6 hover:bg-slate-50/40 transition-all shadow-sm">
+                            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-[18px] font-bold text-slate-900 leading-snug hover:text-[#5B5BF7] transition-all cursor-pointer">
+                                  <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a>
+                                </h4>
+                                <p className="mt-2 text-slate-600 text-[15px] leading-[1.7] max-w-[70ch]">{cleanSnippet}</p>
+                              </div>
+                              
+                              <div className="flex gap-3 shrink-0 mt-2 md:mt-0 items-center">
+                                <span className={`px-3.5 py-1 rounded-full font-extrabold text-[14px] uppercase tracking-wider text-center min-w-[90px] ${
+                                  item.sentiment === 'positive' || item.sentiment === 'bullish' ? 'bg-[#00C896]/10 text-[#00C896]' :
+                                  item.sentiment === 'neutral' ? 'bg-slate-150 text-slate-600' :
+                                  'bg-[#FF5A5A]/10 text-[#FF5A5A]'
+                                }`}>
+                                  {item.sentiment}
+                                </span>
+                                <span className="px-3.5 py-1 rounded-full font-extrabold text-[14px] bg-slate-150 text-slate-600 uppercase tracking-wider text-center truncate max-w-[150px]" title={cleanSource}>
+                                  {cleanSource}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
 
