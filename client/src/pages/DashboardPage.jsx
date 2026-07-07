@@ -208,17 +208,6 @@ export default function DashboardPage({ user, onLogout }) {
     const nextCompany = companyName.trim();
     if (!nextCompany || isStarting || isRunning) return;
 
-    if (user?.role !== 'ROLE_ADMIN') {
-      setResearchState({
-        jobId: null,
-        status: 'failed',
-        stage: 'Failed',
-        progress: 0,
-        message: 'Access Denied: Premium role required to execute autonomous research workflows.',
-      });
-      return;
-    }
-
     setLastSubmittedCompany(nextCompany);
     setReport(null);
     setIsStarting(true);
@@ -381,21 +370,13 @@ export default function DashboardPage({ user, onLogout }) {
                 </div>
                 <button
                   type="submit"
-                  disabled={isStarting || isRunning || user?.role !== 'ROLE_ADMIN'}
-                  className={`px-8 h-[76px] rounded-[20px] font-bold transition-all duration-300 text-[18px] shrink-0 ${
-                    user?.role !== 'ROLE_ADMIN'
-                      ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
-                      : 'bg-[#5B5BF7] hover:bg-[#4a4ad8] text-white shadow-md shadow-indigo-100 hover:shadow-indigo-200 hover:-translate-y-0.5'
-                  }`}
+                  disabled={isStarting || isRunning}
+                  className="bg-[#5B5BF7] hover:bg-[#4a4ad8] text-white px-8 h-[76px] rounded-[20px] font-bold shadow-md shadow-indigo-100 hover:shadow-indigo-200 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-[18px] shrink-0"
                 >
                   {isStarting || isRunning ? (
                     <span className="flex items-center gap-2">
                       <span className="h-2.5 w-2.5 rounded-full bg-white animate-ping" />
                       Analyzing...
-                    </span>
-                  ) : user?.role !== 'ROLE_ADMIN' ? (
-                    <span className="flex items-center gap-2">
-                      🔒 Premium Only
                     </span>
                   ) : (
                     'Run Research'
@@ -845,15 +826,8 @@ export default function DashboardPage({ user, onLogout }) {
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="space-y-8"
                 >
-                  {user?.role !== 'ROLE_ADMIN' ? (
-                    <LockedFeatureView
-                      title="Quantitative Valuation Models Locked"
-                      description="This workspace has successfully calculated intrinsic values, DCF base cases, margins of safety, and quarterly growth area charts. Standard users are restricted from viewing premium financial models."
-                    />
-                  ) : (
-                    <>
-                      {/* Valuation Models DCF */}
-                      <div className="rounded-[20px] border border-slate-200 bg-white p-8 shadow-sm">
+                  {/* Valuation Models DCF */}
+                  <div className="rounded-[20px] border border-slate-200 bg-white p-8 shadow-sm">
                         <h3 className="text-[14px] uppercase font-bold tracking-[0.2em] text-slate-400 mb-6">DCF Valuation model</h3>
                     
                     <div className="grid gap-6 sm:grid-cols-4">
@@ -971,8 +945,6 @@ export default function DashboardPage({ user, onLogout }) {
                       </table>
                     </div>
                   </div>
-                  </>
-                )}
 
                   </motion.div>
                 )}
@@ -987,15 +959,8 @@ export default function DashboardPage({ user, onLogout }) {
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="space-y-8"
                 >
-                  {user?.role !== 'ROLE_ADMIN' ? (
-                    <LockedFeatureView
-                      title="SWOT Matrix & Evidence Audits Locked"
-                      description="The system has completed institutional positive/negative matrix mapping, macroeconomic risk scoring, confidence evaluations, and news sentiment processing. Standard users are restricted from viewing audited evidence tables."
-                    />
-                  ) : (
-                    <>
-                      {/* SWOT Matrix Grid */}
-                      <div className="rounded-[20px] border border-slate-200 bg-white p-8 shadow-sm">
+                  {/* SWOT Matrix Grid */}
+                  <div className="rounded-[20px] border border-slate-200 bg-white p-8 shadow-sm">
                         <h3 className="text-[14px] uppercase font-bold tracking-[0.2em] text-slate-400 mb-6">SWOT Analysis Matrix</h3>
                     
                     <div className="grid gap-6 sm:grid-cols-2">
@@ -1146,8 +1111,6 @@ export default function DashboardPage({ user, onLogout }) {
                       ))}
                     </div>
                   </div>
-                  </>
-                )}
                   </motion.div>
                 )}
               </AnimatePresence>

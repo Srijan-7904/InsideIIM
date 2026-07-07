@@ -4,6 +4,6 @@ import { requireAuth, requireRole } from '../middlewares/authMiddleware.js';
 
 export const researchRouter = Router();
 
-researchRouter.post('/start', requireAuth, requireRole('ROLE_ADMIN'), startResearch);
+researchRouter.post('/start', requireAuth, startResearch);
 researchRouter.get('/status/:jobId', requireAuth, getResearchStatus);
 researchRouter.post('/', requireAuth, createReport);
